@@ -3,34 +3,35 @@
 
 let now_playing = document.querySelector(".now-playing");
 let track_art = document.querySelector(".track-art");
-let track_name = document.querySelector(".track_artist");
+let track_name = document.querySelector(".track-name");
+let track_artist = document.querySelector(".track-artist");
+
+
 let playpause_btn = document.querySelector(".playpause-track");
 let next_btn = document.querySelector(".next-track");
 let prev_btn = document.querySelector(".prev-track");
+
 let seek_slider = document.querySelector(".seek_slider");
 let volume_slider = document.querySelector(".volume_slider");
 let curr_time = document.querySelector(".current-time");
 let total_duration = document.querySelector(".total-duration");
 
 let track_index = 0;
-
 let isPlaying = false;
-
 let updateTimer;
 
-let curr_track = document.createElement('audio');
+// Create new audio element
+var curr_track = document.createElement('audio');
 
 let track_list = [
-
-
 {
     name: "Drowning in the Sound (demo)",
 
     artist: "Amanda Palmer",
 
-    image: "/home/lee/code_stuff/musicPlayer/resources/javascript/imgs/drowning.jpg";
+    image: "resources/javascript/imgs/drowning.jpg",
 
-    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/Amanda Palmer - Amanda Palmer - Drowning In The Sound (Demo).mp3"
+    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/drowning.mp3"
 
 },
 
@@ -39,9 +40,9 @@ let track_list = [
 
     artist: "Amanda Palmer, Sarah-Louise Young, and Maxim Melton" ,
 
-    image: "/home/lee/code_stuff/musicPlayer/resources/javascript/imgs/brexit.jpg",
+    image: "resources/javascript/imgs/brexit.jpg",
 
-    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/Amanda Palmer, Sarah-Louise Young, and Maxim Melton - The French Brexit Song.mp3",
+    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/frenchBrexit.mp3",
 },
 
 
@@ -52,7 +53,7 @@ let track_list = [
 
     image: "/home/lee/code_stuff/musicPlayer/resources/javascript/imgs/mother.jpg",
 
-    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/Amanda Palmer - Amanda Palmer & Jherek Bischoff - Mother.mp3",
+    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/mother.mp3",
 },
 
 
@@ -63,7 +64,7 @@ let track_list = [
 
     image: "/home/lee/code_stuff/musicPlayer/resources/javascript/imgs/ashes.jpg",
 
-    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/Jherek Bischoff and Amanda Palmer - Ashes To Ashes .mp3",
+    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/ashestoashes.mp3",
 },
 
 
@@ -74,50 +75,20 @@ let track_list = [
 
     image: "/home/lee/code_stuff/musicPlayer/resources/javascript/imgs/smallHands.jpg", 
 
-    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/Amanda Palmer - Amanda Palmer - Small Hands, Small Heart (Demo).mp3",
+    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/smallHands.mp3",
 },
 
 
-{
+    {
     name: "Letter to John Schreiner",
 
     artist: "Jason Webley",
 
     image: "/home/lee/code_stuff/musicPlayer/resources/javascript/imgs/giraffe.jpg",
 
-    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/Jason Webley - Letter to John Schreiner.mp3" ,
-}
-
-
+    path: "/home/lee/code_stuff/musicPlayer/resources/javascript/giraffe.mp3" ,
+    },
 ];
-
-/* Loading a new track from the track list */
-
-function loadTrack(track_index) {
-
-    clearInterval(updateTimer);
-
-    resetValues(); /* resets duration values and slider position */
-
-    curr_track.src = track_list[track_index].path; /* src property used to assign new source to audio element */
-
-    curr_track.load();
-
-    track_art.style.backgroundImage = "url(" + track_list[track_index].image + ")";
-
-    track_name.textContent = track_list[track_index].name;
-
-    track_artist.textContent = track_list[track_index].artist;
-
-    now_playing.textContent = "PLAYING " + (track_index + 1) + " OF " + track_list.length;
-
-    updateTimer = setInterval(seekUpdate, 1000);
-
-    curr_track.addEventListener("ended", nextTrack);
-
-    random_bg_color();
-
-}
 
 
 function random_bg_color() {
@@ -132,43 +103,53 @@ function random_bg_color() {
 
 }
 
+/* Loading a new track from the track list */
+
+function loadTrack(track_index) {
+    clearInterval(updateTimer);
+    resetValues(); /* resets duration values and slider position */
+    curr_track.src = track_list[track_index].path; /* src property used to assign new source to audio element */
+    curr_track.load();
+
+    track_art.style.backgroundImage = "url(" + track_list[track_index].image + ")";
+    track_name.textContent = track_list[track_index].name;
+    track_artist.textContent = track_list[track_index].artist;
+    now_playing.textContent = "PLAYING " + (track_index + 1) + " OF " + track_list.length;
+
+    updateTimer = setInterval(seekUpdate, 1000);
+    curr_track.addEventListener("ended", nextTrack);
+    random_bg_color();
+}
+
 function resetValues() {
 
     curr_time.textContent = "00:00";
-
     total_duration.textContent = "00:00";
-
     seek_slider.value = 0;
 }
 
 /* Configuring Player Buttons */
+loadTrack(track_index);
 
 /* Handles the actual playing and pausing of the track */
 function playpauseTrack() {
 
     if (!isPlaying) playTrack();
-
     else pauseTrack();
-
 }
 
 /* Handles playing of currently loaded track, icon of button changes to pause*/
 function playTrack() {
 
     curr_track.play();
-
     isPlaying = true;
-
     playpause_btn.innerHTML = '<i class="fa fa-pause-circle fa-5x"></i>';
-
 }
 
 function pauseTrack() {
 
     curr_track.pause();
-
     isPlaying = false;
-
     playpause_btn.innerHTML = '<i class="fa fa-play-circle fa-5x"></i>';
 
 }
@@ -178,12 +159,9 @@ function nextTrack() {
 
     if (track_index < track_list.length - 1)
         track_index += 1;
-
     else track_index = 0;
-
     loadTrack(track_index);
     playTrack();
-
 }
 
 /* Moves index backward. */
@@ -191,9 +169,7 @@ function prevTrack() {
 
     if (track_index > 0)
         track_index -= 1;
-
     else track_index = track_list.length;
-
     loadTrack(track_index);
     playTrack();
 }
@@ -203,7 +179,6 @@ function prevTrack() {
 function seekTo() {
 
     seekto = curr_track.duration * (seek_slider.value / 100);
-
     curr_track.currentTime = seekto;
 }
 
